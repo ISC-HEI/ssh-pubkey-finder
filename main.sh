@@ -1,52 +1,88 @@
 #!/bin/bash
 
-# A MODIFIER SELON LES MACHINES A ACCEDER
-declare -A devices=(
-    ["adrien@localhost"]="MOT DE PASSE A METTRE"
-    ["local@localhost"]="toto1234"
-)
-
-# Affiche les cles publiques SSH autorisees listees dans $PUBLICS_KEYS_PATH
-show_public_keys() {
-  local username_host=$1
-  local PUBLICS_KEYS_PATH="$HOME/.ssh/authorized_keys"
-
-  echo -e "\n--- Cles Publiques autorisees pour $username_host ---"
-
-    if [ ! -f "$PUBLICS_KEYS_PATH" ]; then
-    echo -e "\033[0;33mAucun fichier authorized_keys trouve pour $username_host\033[0m"
-    return
-  fi
-
-  while IFS= read -r cle; do
-    if [ -n "$cle" ]; then
-      echo -e "\n\033[1;32m $cle \033[0m" # Affiche en vert
-    fi
-  done < "$PUBLICS_KEYS_PATH"
-
-  echo -e "\n-----------------------------------"
+# Recupere les utilisateurs de la machine
+get_users() {
+    getent passwd
 }
 
-# Fonction pour se connecter à un appareil distant via SSH et executer show_public_keys
-ssh_devices() {
-  local username_host=$1
-  local password=$2
+# Verifie si un utilisateur specifique appartient a un group specifique
+# Args : username - le nom d'utilisateur de la personne a verifier
+#        group - Le groupe auquel l'utilisateur doit appartenir
+# Return : 1/0
+have_user_group() {
+    local username=$1
+    local group=$2
 
-  # Separation du nom d'utilisateur et de l'hôte
-  IFS="@" read -r username remote_host <<< "$username_host"
-  {
-    sshpass -p "$password" ssh -o StrictHostKeyChecking=no "$username@$remote_host" "$(declare -f show_public_keys); show_public_keys $username_host"
-  } || {
-    echo -e "\033[31mErreur lors de la connexion a ${username_host}\033[0m"
-  }
+    local user_groups
+    user_groups=$(groups "$username" 2>/dev/null)
+
+    for g in $user_groups; do
+        if [ "$g" == "$group" ]; then
+            return 0
+        fi
+    done
+
+    return 1
 }
 
-# Fonction principale
+# Recupere les cles publiques de l'utilisateur
+# Args : username - Le nom d'utilisateur de la personne
+#        home_path - Le chemin du home de l'utilisateur  
+get_public_keys() {
+    local username=$1
+    local home_path=$2
+    local PUBLIC_KEYS_PATH="$home_path/.ssh/authorized_keys"
+
+    declare -A public_keys=()
+
+    [ ! -f "$PUBLIC_KEYS_PATH" ] && return
+
+    while IFS= read -r line; do
+        [ -z "$line" ] && continue
+
+        IFS=" " read -r key_type key_data _ comment <<< "$line"
+
+        key="${key_type} ${key_data}"
+
+        user_from_comment="${comment%@*}"
+
+        local user_label="$user_from_comment"
+        if have_user_group "$user_from_comment" "sudo"; then
+            user_label+=" (sudo)"
+        fi
+
+        if [[ -n "${public_keys[$key]}" ]]; then
+            public_keys[$key]+=", $user_label"
+        else
+            public_keys[$key]="$user_label"
+        fi
+    done < "$PUBLIC_KEYS_PATH"
+
+    for k in "${!public_keys[@]}"; do
+        echo "$k: ${public_keys[$k]}"
+    done
+}
+
+# programme principal
 main() {
-  for device in "${!devices[@]}"; do
-      password="${devices[$device]}"
-      ssh_devices "$device" "$password"
-  done
+    IFS=$'\n' read -r -d '' -a users < <(get_users && printf '\0')
+
+    for user in "${users[@]}"; do
+        IFS=":" read -r username _ _ _ _ home_path _ <<< "$user"
+
+        echo "Utilisateur : $username"
+
+        public_keys_user=$(get_public_keys "$username" "$home_path")
+
+        if [ -n "$public_keys_user" ]; then
+            echo -e "\033[32m $public_keys_user \033[0m"
+        else
+            echo -e "\033[0;33m Aucune clé publique \033[0m"
+        fi
+
+        echo "-----------------------"
+    done
 }
 
+# ---------
 main

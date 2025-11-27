@@ -35,12 +35,22 @@ get_public_keys() {
 
     declare -A public_keys=()
 
-    [ ! -f "$PUBLIC_KEYS_PATH" ] && return
+    if [ ! -f "$PUBLIC_KEYS_PATH" ]; then
+        return 0
+    fi
+    
+    if [ ! -r "$PUBLIC_KEYS_PATH" ]; then
+        echo "Accès impossible pour lire $PUBLIC_KEYS_PATH."
+        return 1
+    fi
 
     while IFS= read -r line; do
         [ -z "$line" ] && continue
+        if [[ "$line" == \#* ]]; then
+            continue
+        fi
 
-        IFS=" " read -r key_type key_data _ comment <<< "$line"
+        IFS=" " read -r key_type key_data comment <<< "$line"
 
         key="${key_type} ${key_data}"
 
@@ -65,22 +75,22 @@ get_public_keys() {
 
 # programme principal
 main() {
+    if [ "$EUID" -ne 0 ]; then
+        echo -e "\\033[0;31m Ce script doit être exécuté avec sudo. \\033[0m"
+        exit 1
+    fi
+
     IFS=$'\n' read -r -d '' -a users < <(get_users && printf '\0')
 
     for user in "${users[@]}"; do
         IFS=":" read -r username _ _ _ _ home_path _ <<< "$user"
 
-        echo "Utilisateur : $username"
-
         public_keys_user=$(get_public_keys "$username" "$home_path")
 
-        if [ -n "$public_keys_user" ]; then
+        if [ -n "$public_keys_user" ]; then 
+            echo "Utilisateur : $username"
             echo -e "\033[32m $public_keys_user \033[0m"
-        else
-            echo -e "\033[0;33m Aucune clé publique \033[0m"
         fi
-
-        echo "-----------------------"
     done
 }
 

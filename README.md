@@ -54,18 +54,21 @@ chmod +x ssh-pubkeys-finder.sh
 Here you can see an examle of output with no argument:
 ```bash
 admin@mypc:~/$ ./ssh-pubkey-finder.sh
-User: root
- Permission denied, this user may have some public keys 
-User: adrien
- ssh-ed25519 AABAC3NzaC1lZDI1NTE9UAAAIOgJnqfqwBihTBOwVn0+SEr0W1oWz13mUFFZ56XSYoC8: local, adrien(sudo) 
-User: local
- Permission denied, this user may have some public keys
+Permission denied, root may have some public keys
+ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAICBeVf+bmAsL6O0li173PA8dw4qSWwU1v3WegXGB26IV adrien
+ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIOgJnqfqwBihTBLfBn0+SEr0W1oWz13mUFFZ56XSYoC8 adrien
 ```
-Here you can see an example with two arguments combine:
+````bash
+admin@mypc:~/$ sudo ./ssh-pubkey-finder.sh 
+ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAICBeVf+bmAsL6O0li173PA8dw4qSWwU1v3WegXGB26IV adrien, local
+ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIOgJnqfqwBihTBLfBn0+SEr0W1oWz13mUFFZ56XSYoC8 adrien
+```
+Here you can see an example with the user specify
 ```bash
-admin@mypc:~/$ ./ssh-pubkey-finder.sh -u adrien -g sudo
-User: adrien
- ssh-ed25519 AABAC3NzaC1lZDI1NTE9UAAAIOgJnqfqwBihTBOwVn0+SEr0W1oWz13mUFFZ56XSYoC8: local, adrien (sudo) 
+admin@mypc:~/$ ./ssh-pubkey-finder.sh -u adrien
+ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAICBeVf+bmAsL6O0li173PA8dw4qSWwU1v3WegXGB26IV adrien
+ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIOgJnqfqwBihTBLfBn0+SEr0W1oWz13mUFFZ56XSYoC8 adrien
+
 ```
 
 ## License

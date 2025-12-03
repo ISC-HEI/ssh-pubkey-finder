@@ -59,25 +59,22 @@ have_user_group() {
 # Args:
 #   $1 - username
 #   $2 - user's home directory path
-#   $3 - group to check if the user is a member
 # Prints:
 #   Unique keys with associated identifiers extracted from comments 
 get_public_keys() {
     local username=$1
     local home_path=$2
-    local group=$3
     local PUBLIC_KEYS_PATH="$home_path/.ssh/authorized_keys"
-
-    declare -A public_keys=()
+    declare public_keys=()
 
     if ! ls "$PUBLIC_KEYS_PATH" >/dev/null 2>&1; then
         err=$(ls "$PUBLIC_KEYS_PATH" 2>&1 >/dev/null)
 
         if [[ "$err" == *"Permission denied"* ]]; then
-            echo "Permission denied, this user may have some public keys"
-            return
+            echo "Permission denied, ${username} may have some public keys" >&2
+            exit 1 # Access denied
         else
-            return
+            exit 1 # File not found
         fi
     fi
 
@@ -87,43 +84,25 @@ get_public_keys() {
             continue
         fi
 
-        IFS=" " read -r key_type key_data comment <<< "$line"
-
+        IFS=" " read -r key_type key_data _ <<< "$line"
         key="${key_type} ${key_data}"
-
-        user_from_comment="${comment%@*}"
-
-        local user_label="$user_from_comment"
-        if have_user_group "$user_from_comment" "${group}"; then
-            user_label+=" (${group})"
-        fi
-
-        if [[ -n "${public_keys[$key]}" ]]; then
-            public_keys[$key]+=", $user_label"
-        else
-            public_keys[$key]="$user_label"
-        fi
+        public_keys+=("$key")
     done < "$PUBLIC_KEYS_PATH"
-
-    for k in "${!public_keys[@]}"; do
-        echo "$k: ${public_keys[$k]}"
-    done
+    printf "%s\n" "${public_keys[@]}"
 }
 
 displayHelp() {
-    echo 'Usage: ./script.sh [options]
+    echo 'Usage: ./ssh-pubkey-finder.sh [options]
 
     Options:
       -h            Display this help message
       -u USER       Check only the specified user (e.g., -u local)
-      -o FILE       Output results to the specified file
       -g GROUP      Note if the user is in this group
       -v            Display script version
     
     Description:
       This script lists the SSH public keys of system users.
       It can show all users or a specific user, and annotate keys.'
-
 }
 
 main() {
@@ -142,16 +121,33 @@ main() {
         IFS=$'\n' read -r -d '' -a users < <(get_users && printf '\0')
     fi
 
+    declare -A public_keys_user=()
+
     for user in "${users[@]}"; do
         IFS=":" read -r username _ _ _ _ home_path _ <<< "$user"
 
-        public_keys_user=$(get_public_keys "$username" "$home_path" "$group_to_show")
 
-        if [ -n "$public_keys_user" ]; then 
-            echo "User: $username"
-            echo -e "\033[32m $public_keys_user \033[0m"
+        keys=$(get_public_keys "$username" "$home_path")
+        error=$?
+
+        if [ $error -eq 0 ]; then
+            while IFS= read -r key; do
+                if [[ -n "$key" ]]; then
+                    if [[ -n "${public_keys_user[$key]}" ]]; then
+                        public_keys_user["$key"]+=", $username"
+                    else
+                        public_keys_user["$key"]="$username"
+                    fi
+                fi
+            done <<< "$keys"
         fi
     done
+
+    if [ ${#public_keys_user[@]} -gt 0 ]; then
+        for key in "${!public_keys_user[@]}"; do
+            echo "$key ${public_keys_user[$key]}"
+        done
+    fi
 }
 
 main "$@"

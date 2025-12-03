@@ -40,13 +40,15 @@ get_public_keys() {
 
     declare -A public_keys=()
 
-    if [ ! -f "$PUBLIC_KEYS_PATH" ]; then
-        return 0
-    fi
-    
-    if [ ! -r "$PUBLIC_KEYS_PATH" ]; then
-        echo "Access denied for $PUBLIC_KEYS_PATH."
-        return 1
+    if ! ls "$PUBLIC_KEYS_PATH" >/dev/null 2>&1; then
+        err=$(ls "$PUBLIC_KEYS_PATH" 2>&1 >/dev/null)
+
+        if [[ "$err" == *"Permission denied"* ]]; then
+            echo "Permission denied, this user may have some public keys"
+            return
+        else
+            return
+        fi
     fi
 
     while IFS= read -r line; do
@@ -79,11 +81,6 @@ get_public_keys() {
 }
 
 main() {
-    if [ "$EUID" -ne 0 ]; then
-        echo -e "\\033[0;31m This script must be executed with sudo. \\033[0m"
-        exit 1
-    fi
-
     IFS=$'\n' read -r -d '' -a users < <(get_users && printf '\0')
 
     for user in "${users[@]}"; do

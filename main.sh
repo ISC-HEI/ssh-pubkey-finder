@@ -1,14 +1,16 @@
 #!/bin/bash
 
-# Recupere les utilisateurs de la machine
+# Retrieve all users from the system
 get_users() {
     getent passwd
 }
 
-# Verifie si un utilisateur specifique appartient a un group specifique
-# Args : username - le nom d'utilisateur de la personne a verifier
-#        group - Le groupe auquel l'utilisateur doit appartenir
-# Return : 1/0
+# Check whether a user belongs to a specific group
+# Args:
+#   $1 - username
+#   $2 - group name
+# Returns:
+#   0 if the user is in the group, 1 otherwise
 have_user_group() {
     local username=$1
     local group=$2
@@ -25,9 +27,12 @@ have_user_group() {
     return 1
 }
 
-# Recupere les cles publiques de l'utilisateur
-# Args : username - Le nom d'utilisateur de la personne
-#        home_path - Le chemin du home de l'utilisateur  
+# Extract all public SSH keys for a user
+# Args:
+#   $1 - username
+#   $2 - user's home directory path
+# Prints:
+#   Unique keys with associated identifiers extracted from comments 
 get_public_keys() {
     local username=$1
     local home_path=$2
@@ -40,7 +45,7 @@ get_public_keys() {
     fi
     
     if [ ! -r "$PUBLIC_KEYS_PATH" ]; then
-        echo "Accès impossible pour lire $PUBLIC_KEYS_PATH."
+        echo "Access denied for $PUBLIC_KEYS_PATH."
         return 1
     fi
 
@@ -73,10 +78,9 @@ get_public_keys() {
     done
 }
 
-# programme principal
 main() {
     if [ "$EUID" -ne 0 ]; then
-        echo -e "\\033[0;31m Ce script doit être exécuté avec sudo. \\033[0m"
+        echo -e "\\033[0;31m This script must be executed with sudo. \\033[0m"
         exit 1
     fi
 
@@ -88,11 +92,10 @@ main() {
         public_keys_user=$(get_public_keys "$username" "$home_path")
 
         if [ -n "$public_keys_user" ]; then 
-            echo "Utilisateur : $username"
+            echo "User: $username"
             echo -e "\033[32m $public_keys_user \033[0m"
         fi
     done
 }
 
-# ---------
 main

@@ -13,6 +13,7 @@
 - [Features](#features)
 - [Installation](#installation)
 - [Script Execution](#script-execution)
+    - [Arguments](#arguments)
     - [Example](#example)
 - [License](#license)
 
@@ -21,8 +22,6 @@
 - Retrieves all users on the system.
 - Lists authorized SSH public keys for each user.
 - Allows specifying a user’s group.
-
-
 
 ## Installation
 
@@ -43,8 +42,16 @@ chmod +x ssh-pubkeys-finder.sh
 ./ssh-pubkeys-finder.sh
 ```
 
+### Arguments
+| **Argument** |         **Description**         |         **Params**        |
+|:------------:|:-------------------------------:|:-------------------------:|
+| -h           | Show help                       |             X             |
+| -v           | Show the current version        |             X             |
+| -u USER      | Check only for the specify user |  USER: the user to check  |
+| -g GROUP     | Note if a user is in this group | GROUP: the group to check |
+
 ### Example
-here you can see an examle of output:
+Here you can see an examle of output with no argument:
 ```bash
 admin@mypc:~/$ ./ssh-pubkey-finder.sh
 User: root
@@ -53,6 +60,12 @@ User: adrien
  ssh-ed25519 AABAC3NzaC1lZDI1NTE9UAAAIOgJnqfqwBihTBOwVn0+SEr0W1oWz13mUFFZ56XSYoC8: local, adrien(sudo) 
 User: local
  Permission denied, this user may have some public keys
+```
+Here you can see an example with two arguments combine:
+```bash
+admin@mypc:~/$ ./ssh-pubkey-finder.sh -u adrien -g sudo
+User: adrien
+ ssh-ed25519 AABAC3NzaC1lZDI1NTE9UAAAIOgJnqfqwBihTBOwVn0+SEr0W1oWz13mUFFZ56XSYoC8: local, adrien (sudo) 
 ```
 
 ## License

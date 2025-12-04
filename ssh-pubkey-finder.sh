@@ -44,7 +44,7 @@ have_user_group() {
     local group=$2
 
     local user_groups
-    user_groups=$(groups "$username" 2>/dev/null)
+    user_groups=$(groups "$username")
 
     for g in $user_groups; do
         if [ "$g" == "$group" ]; then
@@ -71,7 +71,7 @@ get_public_keys() {
         err=$(ls "$PUBLIC_KEYS_PATH" 2>&1 >/dev/null)
 
         if [[ "$err" == *"Permission denied"* ]]; then
-            echo "Permission denied, ${username} may have some public keys" >&2
+           echo "error: EPERM, permission denied on $PUBLIC_KEYS_PATH" >&2
             exit 1 # Access denied
         else
             exit 1 # File not found
@@ -114,7 +114,7 @@ main() {
         if [ -n "$user_entry" ]; then
             users+=("$user_entry")
         else
-            echo "User $user_to_check not found."
+            echo "error: ENOENT, user $user_to_check not found."  >&2
             exit 1
         fi
     else
@@ -134,7 +134,7 @@ main() {
             while IFS= read -r key; do
                 if [[ -n "$key" ]]; then
                     if [[ -n "${public_keys_user[$key]}" ]]; then
-                        public_keys_user["$key"]+=", $username"
+                        public_keys_user["$key"]+=",$username"
                     else
                         public_keys_user["$key"]="$username"
                     fi
@@ -145,7 +145,7 @@ main() {
 
     if [ ${#public_keys_user[@]} -gt 0 ]; then
         for key in "${!public_keys_user[@]}"; do
-            echo "$key ${public_keys_user[$key]}"
+            echo -e "${key}\t${public_keys_user[$key]}"
         done
     fi
 }

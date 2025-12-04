@@ -15,6 +15,7 @@
 - [Script Execution](#script-execution)
     - [Arguments](#arguments)
     - [Example](#example)
+- [Debian executable](#debian-executable)
 - [License](#license)
 
 
@@ -36,10 +37,10 @@ cd ssh-pubkey-finder
 Run the script using the following command:
 ```bash
 # Make sure the script is executable (normally it is)
-chmod +x ssh-pubkeys-finder.sh
+chmod +x ssh-pubkeys-finder
 
 # Execute the script
-./ssh-pubkeys-finder.sh
+./ssh-pubkeys-finder
 ```
 
 ### Arguments
@@ -52,23 +53,35 @@ chmod +x ssh-pubkeys-finder.sh
 ### Example
 Here you can see an examle of output with no argument:
 ```bash
-admin@mypc:~/$ ./ssh-pubkey-finder.sh
+admin@mypc:~/$ ./ssh-pubkey-finder
 Permission denied, root may have some public keys
 ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAICBeVf+bmAsL6O0li173PA8dw4qSWwU1v3WegXGB26IV adrien
 ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIOgJnqfqwBihTBLfBn0+SEr0W1oWz13mUFFZ56XSYoC8 adrien
 ```
 
 ```bash
-admin@mypc:~/$ sudo ./ssh-pubkey-finder.sh 
+admin@mypc:~/$ sudo ./ssh-pubkey-finder
 ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAICBeVf+bmAsL6O0li173PA8dw4qSWwU1v3WegXGB26IV adrien, local
 ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIOgJnqfqwBihTBLfBn0+SEr0W1oWz13mUFFZ56XSYoC8 adrien
 ```
 Here you can see an example with the user specify
 ```bash
-admin@mypc:~/$ sudo ./ssh-pubkey-finder.sh -u adrien
+admin@mypc:~/$ sudo ./ssh-pubkey-finder -u adrien
 ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAICBeVf+bmAsL6O0li173PA8dw4qSWwU1v3WegXGB26IV adrien
 ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIOgJnqfqwBihTBLfBn0+SEr0W1oWz13mUFFZ56XSYoC8 adrien
 
+```
+
+## Debian executable
+This project integrate a `.deb` file, you can install it like that:
+```bash
+sudo dpkg -i ssh-pubkey-finder.deb
+```
+
+You can verify the installation by typing this:
+```bash
+ssh-pubkey-finder -v
+# Ouput : 0.2.0
 ```
 
 ## License

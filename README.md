@@ -48,7 +48,6 @@ chmod +x ssh-pubkeys-finder.sh
 | -h           | Show help                       |             X             |
 | -v           | Show the current version        |             X             |
 | -u USER      | Check only for the specify user |  USER: the user to check  |
-| -g GROUP     | Note if a user is in this group | GROUP: the group to check |
 
 ### Example
 Here you can see an examle of output with no argument:
@@ -66,7 +65,7 @@ ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIOgJnqfqwBihTBLfBn0+SEr0W1oWz13mUFFZ56XSYoC8
 ```
 Here you can see an example with the user specify
 ```bash
-admin@mypc:~/$ ./ssh-pubkey-finder.sh -u adrien
+admin@mypc:~/$ sudo ./ssh-pubkey-finder.sh -u adrien
 ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAICBeVf+bmAsL6O0li173PA8dw4qSWwU1v3WegXGB26IV adrien
 ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIOgJnqfqwBihTBLfBn0+SEr0W1oWz13mUFFZ56XSYoC8 adrien
 

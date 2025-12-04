@@ -3,10 +3,9 @@
 VERSION=0.1.0
 
 user_to_check=""
-group_to_show=""
 
 process_args() {
-    OPTSTRING="hu:g:v"
+    OPTSTRING="hu:v"
 
     while getopts ${OPTSTRING} opt; do
         case ${opt} in
@@ -16,9 +15,6 @@ process_args() {
                 ;;
             u)
                 user_to_check="${OPTARG}"
-                ;;
-            g)
-                group_to_show="${OPTARG}"
                 ;;
             v)
                 echo "${VERSION}"
@@ -31,28 +27,6 @@ process_args() {
 # Retrieve all users from the system
 get_users() {
     getent passwd
-}
-
-# Check whether a user belongs to a specific group
-# Args:
-#   $1 - username
-#   $2 - group name
-# Returns:
-#   0 if the user is in the group, 1 otherwise
-have_user_group() {
-    local username=$1
-    local group=$2
-
-    local user_groups
-    user_groups=$(groups "$username")
-
-    for g in $user_groups; do
-        if [ "$g" == "$group" ]; then
-            return 0
-        fi
-    done
-
-    return 1
 }
 
 # Extract all public SSH keys for a user
@@ -97,7 +71,6 @@ displayHelp() {
     Options:
       -h            Display this help message
       -u USER       Check only the specified user (e.g., -u local)
-      -g GROUP      Note if the user is in this group
       -v            Display script version
     
     Description:

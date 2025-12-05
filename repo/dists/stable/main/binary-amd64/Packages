@@ -1,0 +1,13 @@
+Package: ssh-pubkey-finder
+Version: 0.2.0
+Architecture: all
+Maintainer: Adrien Reynard <adrien.reynard@hevs.ch>
+Filename: pool/main/ssh-pubkey-finder.deb
+Size: 1832
+MD5sum: 1518f2c556777c4bcc7afac54c542484
+SHA1: 5a69b9f94de5d6668e3ac08a7f22f291b4f48a7e
+SHA256: ad0ae3541cc638b9434c867679c121b54cc583767f3fcd688fc68aff54ae9f6e
+Section: utils
+Priority: optional
+Description: This script lists the SSH public keys of system users. It can show all users or a specific user, and annotate keys.
+

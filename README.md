@@ -12,12 +12,11 @@
 ## Table of Contents
 - [Features](#features)
 - [Installation](#installation)
+    - [Installing from Github](#installing-from-github)
+    - [Installing via apt](#installing-via-apt-for-debianubuntu)
 - [Script Execution](#script-execution)
     - [Arguments](#arguments)
     - [Example](#example)
-- [Debian executable](#debian-executable)
-- [Package repository](#package-repository)
-    - [Adding the repository to your system](#adding-the-repository-to-your-system)
 - [License](#license)
 
 
@@ -27,16 +26,41 @@
 - Allows specifying a user’s group.
 
 ## Installation
+### Installing from GitHub
 
 Clone the GitHub repository:
-
 ```bash
 git clone https://github.com/ISC-HEI/ssh-pubkey-finder.git
 cd ssh-pubkey-finder
 ```
 
+### Installing via apt (for Debian/Ubuntu)
+
+You can add the official repository and install the package directly:
+1. Add the repository to your system:
+```bash
+echo "deb [trusted=yes] https://apt.chezmoicamarche.ch/ssh-pubkey-finder/repo stable main" | sudo tee /etc/apt/sources.list.d/ssh-pubkey-finder.lis
+```
+2. Update your package lists and install the package:
+```bash
+sudo apt update
+sudo apt install ssh-pubkey-finder
+```
+3. Run the script:
+```bash
+ssh-pubkey-finder -v
+# Output: 0.2.0
+```
+> Note: Installing via apt makes the script available system-wide, so you don’t need to be in the repository folder to run it.
 ## Script Execution
 Run the script using the following command:
+
+If the script is installed system-wide:
+```bash
+ssh-pubkey-finder
+```
+
+If running directly from the cloned repository:
 ```bash
 # Make sure the script is executable (normally it is)
 chmod +x ssh-pubkeys-finder
@@ -73,51 +97,6 @@ ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAICBeVf+bmAsL6O0li173PA8dw4qSWwU1v3WegXGB26IV
 ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIOgJnqfqwBihTBLfBn0+SEr0W1oWz13mUFFZ56XSYoC8 adrien
 
 ```
-
-## Debian executable
-
-This project includes a script to generate a Debian package (`.deb`) for easy installation:
-```bash
-./build-deb.sh
-```
-
-Once the `.deb` file is created, you can install it with:
-```bash
-sudo dpkg -i ssh-pubkey-finder.deb
-```
-
-Verify the installation:
-```bash
-ssh-pubkey-finder -v
-# Output : 0.2.0
-```
-This allows you to run `ssh-pubkey-finder` from anywhere on your system like a standard command.
-
-## Package repository
-You can create a local Debian package repository using the provided script:
-```bash
-./build-repo.sh
-``` 
-> Note: This script requires a `.deb` file generated with [Debian Executable](#debian-executable)
-
-Once the repository is created, you can add it to your system’s APT sources and install the package like any standard Debian package.
-
-### Adding the repository to your system
-
-1. Copy the repository to a location on your system, e.g., /home/username/ssh-pubkey-repo.
-> Replace `/home/username` with your actual home path
-2. Add the repository to APT sources:
-```bash
-echo "deb [trusted=yes] file:/home/username/ssh-pubkey-repo ./" | sudo tee /etc/apt/sources.list.d/ssh-pubkey-finder.list
-```
-
-3. Update APT and install the package:
-```bash
-sudo apt update
-sudo apt install ssh-pubkey-finder
- ```
-
-This setup allows you to manage updates or deploy `ssh-pubkey-finder` across multiple systems easily.
 
 ## License
 The current License is Apache version 2.0, you can see it in the [LICENSE](LICENSE) file.

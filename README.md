@@ -51,7 +51,7 @@ sudo apt install ssh-pubkey-finder
 3. Run the script:
 ```bash
 ssh-pubkey-finder -v
-# Output: 0.2.0
+# Output: 0.3.0
 ```
 > Note: Installing via apt makes the script available system-wide, so you don’t need to be in the repository folder to run it.
 ## Script Execution

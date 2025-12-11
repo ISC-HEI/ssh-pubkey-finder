@@ -2,7 +2,7 @@
 set -e
 
 PKG_NAME="ssh-pubkey-finder"
-PKG_VERSION="0.2.0"
+PKG_VERSION="0.3.0"
 
 function create_structure() {
     mkdir DEBIAN

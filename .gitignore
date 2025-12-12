@@ -1,3 +1,5 @@
 *.deb
 
 repo/
+
+tmp/

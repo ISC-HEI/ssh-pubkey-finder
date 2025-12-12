@@ -1,0 +1,9 @@
+Format: http://www.debian.org/doc/packaging-manuals/copyright-format/1.0/
+Upstream-Name: ssh-pubkey-finder
+Source: https://github.com/ISC-HEI/ssh-pubkey-finder
+
+Files: *
+Copyright: 2025 Adrien Reynard <adrien.reynard@hevs.ch>
+License: Apache-2
+ This package is licensed under the Apache License, Version 2.0.
+ The full text can be found in /usr/share/common-licenses/Apache-2.0

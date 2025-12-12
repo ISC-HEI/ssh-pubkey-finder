@@ -8,7 +8,7 @@
 ![Release Date](https://img.shields.io/github/release-date/ISC-HEI/ssh-pubkey-finder)
 ![Last Commit](https://img.shields.io/github/last-commit/ISC-HEI/ssh-pubkey-finder)
 
-**SSH Pubkey Finder** is a Bash script that allows you to retrieve all the authorized SSH public keys on a Linux system. For each user, the script can also specify the groups to which he belongs.
+**SSH Pubkey Finder** is a Bash script that allows you to retrieve all the authorized SSH public keys on a Linux system.
 </div>
 
 ## Table of Contents

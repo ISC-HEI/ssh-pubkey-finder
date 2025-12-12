@@ -3,42 +3,57 @@ set -e
 
 PKG_NAME="ssh-pubkey-finder"
 PKG_VERSION="0.3.0"
+TMP_DIR="tmp/${PKG_NAME}-${PKG_VERSION}"
+DIST_DIR="dist"
+FILE_SOURCE="packaging"
 
-function create_structure() {
-    mkdir DEBIAN
-    cat > DEBIAN/control <<EOF
-Package: $PKG_NAME
-Version: $PKG_VERSION
-Section: utils
-Priority: optional
-Architecture: all
-Maintainer: Adrien Reynard <adrien.reynard@hevs.ch>
-Description: This script lists the SSH public keys of system users.
- It can show all users or a specific user, and annotate keys.
-EOF
+rm -rf "$TMP_DIR"
+mkdir -p "$TMP_DIR"
+mkdir -p "$DIST_DIR"
 
-    mkdir -p usr/local/bin
-    cp ./ssh-pubkey-finder ./usr/local/bin/
-    chmod +x usr/local/bin/ssh-pubkey-finder
-}
+echo ">> Creating package structure in $TMP_DIR"
 
-function make_executable() {
-    cd ..
-    dpkg-deb --build "$PKG_NAME"
-    mv "${PKG_NAME}.deb" "$PKG_NAME"
-    cd "$PKG_NAME"
-}
+mkdir -p "$TMP_DIR/DEBIAN"
+mkdir -p "$TMP_DIR/usr/bin"
+mkdir -p "$TMP_DIR/usr/share/doc/$PKG_NAME"
+mkdir -p "$TMP_DIR/usr/share/man/man1"
 
-function remove_structure() {
-    rm -rf usr/ DEBIAN/
-}
+# ---- Bash script ----
+cp "./$PKG_NAME" "$TMP_DIR/usr/bin/"
+chmod 755 "$TMP_DIR/usr/bin/$PKG_NAME"
 
-function main() {
-    rm -f ssh-pubkey-finder.deb
-    create_structure
-    make_executable
-    remove_structure
-    echo "SUCCESS: The executable has been created"
-}
+# ---- Changelog ----
+cp "$FILE_SOURCE/changelog" "$TMP_DIR/usr/share/doc/$PKG_NAME/changelog"
+gzip -9 -n "$TMP_DIR/usr/share/doc/$PKG_NAME/changelog"
 
-main
+# ---- License & README ----
+cp README.md "$TMP_DIR/usr/share/doc/$PKG_NAME/"
+cp LICENSE "$TMP_DIR/usr/share/doc/$PKG_NAME/"
+
+# ---- Copyright ----
+cp "$FILE_SOURCE/copyright" "$TMP_DIR/usr/share/doc/$PKG_NAME/"
+
+# ---- Control ----
+cp "$FILE_SOURCE/control" "$TMP_DIR/DEBIAN/control"
+chmod 644 "$TMP_DIR/DEBIAN/control"
+
+# ---- Man page ----
+cp "$FILE_SOURCE/ssh-pubkey-finder.1" "$TMP_DIR/usr/share/man/man1/"
+gzip -9 -n "$TMP_DIR/usr/share/man/man1/ssh-pubkey-finder.1"
+
+# ---- Cleanup git files ----
+find "$TMP_DIR" -name ".git*" -exec rm -rf {} +
+
+# ---- Fix permissions ----
+find "$TMP_DIR" -type d -exec chmod 755 {} \;
+find "$TMP_DIR/usr/share" -type f -exec chmod 644 {} \;
+chmod 755 "$TMP_DIR/usr/bin/$PKG_NAME"
+chmod 755 "$TMP_DIR/usr/share/doc/$PKG_NAME"
+
+# ---- Build ----
+DEB_OUTPUT="${DIST_DIR}/${PKG_NAME}_${PKG_VERSION}.deb"
+fakeroot dpkg-deb --build "$TMP_DIR" "$DEB_OUTPUT"
+
+rm -rf "$TMP_DIR"
+
+echo "SUCCESS: $DEB_OUTPUT has been created"

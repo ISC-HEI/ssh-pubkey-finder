@@ -5,9 +5,10 @@ PKG_NAME="ssh-pubkey-finder"
 ARCH="amd64"
 DIST="stable"
 SECTION="main"
+VERSION="0.3.0"
 
 function check_debian_executable() {
-    if [ ! -e "$PKG_NAME.deb" ]; then
+    if [ ! -e "dist/${PKG_NAME}_${VERSION}.deb" ]; then
         echo "error: EPERM, the .deb file doesn't exist."
         exit 1
     fi
@@ -23,7 +24,7 @@ function create_structure() {
     mkdir -p repo/dists/$DIST/$SECTION/binary-$ARCH
     mkdir -p repo/pool/$SECTION
 
-    cp "$PKG_NAME".deb repo/pool/$SECTION/
+    cp "dist/${PKG_NAME}_${VERSION}.deb" repo/pool/$SECTION/
 }
 
 function create_packages() {

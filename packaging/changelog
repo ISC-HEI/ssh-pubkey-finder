@@ -1,0 +1,21 @@
+ssh-pubkey-finder (0.3.0-1) unstable; urgency=medium
+
+  * Add Debian executable script
+  * Add package repository script
+  * Publish script online
+
+ -- Adrien Reymard <adrien.reynard@hevs.ch>  Thu, 11 Dec 2025 14:50:00 +0100
+
+ssh-pubkey-finder (0.2.0-1) unstable; urgency=medium
+
+  * Improved output
+  * Remove group information
+  * Add flags/argument
+
+ -- Adrien Reymard <adrien.reynard@hevs.ch>  Tue, 10 Dec 2025 12:00:00 +0100
+
+ssh-pubkey-finder (0.1.0-1) unstable; urgency=high
+
+  * Initial release
+
+ -- Adrien Reymard <adrien.reynard@hevs.ch>  Wed, 03 Dec 2025 12:00:00 +0100

@@ -1,5 +1,11 @@
 *.deb
+*.snap
 
 repo/
 
 tmp/
+
+parts/
+prime/
+stage/
+overlay/

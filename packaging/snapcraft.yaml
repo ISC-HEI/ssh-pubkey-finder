@@ -1,0 +1,32 @@
+title: "SSH Public Key Finder"
+contact: "Adrien Reynard <adrien.reynard@hevs.ch>"
+license: "Apache-2.0"
+name: ssh-pubkey-finder
+base: core22
+version: '0.3.0'
+summary: 'Find the SSH public keys on the system'
+description: |
+  This script lists the SSH public keys of system users.
+  It can show all users or a specific user, and annotate keys.
+
+grade: stable
+confinement: classic
+
+parts:
+  ssh-pubkey-finder:
+    plugin: dump
+    source: .
+    organize:
+      ssh-pubkey-finder: bin/ssh-pubkey-finder
+
+apps:
+  ssh-pubkey-finder:
+    command: bin/ssh-pubkey-finder
+    plugs:
+      - home
+      - network
+
+donation: "https://github.com/ISC-HEI/ssh-pubkey-finder"
+issues: "https://github.com/ISC-HEI/ssh-pubkey-finder/issues"
+source-code: "https://github.com/ISC-HEI/ssh-pubkey-finder"
+website: "https://github.com/ISC-HEI/ssh-pubkey-finder"

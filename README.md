@@ -54,6 +54,18 @@ ssh-pubkey-finder -v
 # Output: 0.3.0
 ```
 > Note: Installing via apt makes the script available system-wide, so you don’t need to be in the repository folder to run it.
+
+### Installation via Snap
+To install this script using Snap, you can run:
+```bash
+./build-snap.sh
+```
+This will create a `.snap` file in the dist folder. Then install it like that:
+```bash
+sudo snap install ./dist/ssh-pubkey-finder_0.3.0_amd64.snap --classic --dangerous
+```
+If you want to publish this script, you can check the [corresponding README.md](snap_publication.md)
+
 ## Script Execution
 Run the script using the following command:
 

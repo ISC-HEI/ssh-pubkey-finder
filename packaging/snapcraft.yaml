@@ -1,5 +1,5 @@
 title: "SSH Public Key Finder"
-contact: "Adrien Reynard <adrien.reynard@hevs.ch>"
+contact: adrien.reynard@hevs.ch
 license: "Apache-2.0"
 name: ssh-pubkey-finder
 base: core22
@@ -22,9 +22,6 @@ parts:
 apps:
   ssh-pubkey-finder:
     command: bin/ssh-pubkey-finder
-    plugs:
-      - home
-      - network
 
 donation: "https://github.com/ISC-HEI/ssh-pubkey-finder"
 issues: "https://github.com/ISC-HEI/ssh-pubkey-finder/issues"

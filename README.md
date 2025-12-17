@@ -41,7 +41,7 @@ cd ssh-pubkey-finder
 You can add the official repository and install the package directly:
 1. Add the repository to your system:
 ```bash
-echo "deb [trusted=yes] https://apt.chezmoicamarche.ch/ssh-pubkey-finder/repo stable main" | sudo tee /etc/apt/sources.list.d/ssh-pubkey-finder.lis
+echo "deb [trusted=yes] https://apt.chezmoicamarche.ch/ssh-pubkey-finder/repo stable main" | sudo tee /etc/apt/sources.list.d/ssh-pubkey-finder.list
 ```
 2. Update your package lists and install the package:
 ```bash
